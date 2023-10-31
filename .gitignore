@@ -1,0 +1,27 @@
+# Zig build artifacts
+zig-out/
+zig-cache/
+build/
+build-*/
+*.o
+*.h
+*.lib
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Zig package manager
+zigmod/
+
+# Editor artifacts
+*.swp
+*.swo
+*.bak
+*.sublime-*
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
