@@ -1,24 +1,51 @@
 const std = @import("std");
+const algorithms = @import("algorithms.zig");
 
-pub fn main() !void {
-    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
-
-    // stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
-
-    try stdout.print("Run `zig build test` to run the tests.\n", .{});
-
-    try bw.flush(); // don't forget to flush!
+fn isEven(val: i32) bool {
+    return @mod(val, 2) == 0;
 }
 
-test "simple test" {
-    var list = std.ArrayList(i32).init(std.testing.allocator);
-    defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
-    try list.append(42);
-    try std.testing.expectEqual(@as(i32, 42), list.pop());
+fn isPositive(val: i32) bool {
+    return val > 0;
+}
+
+pub fn main() !void {}
+
+test "allOf" {
+    const even_arr = [_]i32{ 2, 4, 6, 8, 10 };
+    const all_even = algorithms.allOf(i32, isEven, &even_arr);
+    try std.testing.expect(all_even);
+
+    const mixed_arr = [_]i32{ 2, 3, 6, 8, 10 };
+    const all_even_mixed = algorithms.allOf(i32, isEven, &mixed_arr);
+    try std.testing.expect(!all_even_mixed);
+
+    const positive_arr = [_]i32{ 1, 2, 3, 4, 5 };
+    const all_positive = algorithms.allOf(i32, isPositive, &positive_arr);
+    try std.testing.expect(all_positive);
+
+    const mixed_positive_negative_arr = [_]i32{ -1, 2, -3, 4, 5 };
+    const all_positive_mixed = algorithms.allOf(i32, isPositive, &mixed_positive_negative_arr);
+    try std.testing.expect(!all_positive_mixed);
+
+    const empty_arr = [_]i32{};
+    const all_even_empty = algorithms.allOf(i32, isEven, &empty_arr);
+    try std.testing.expect(all_even_empty);
+
+    const all_positive_empty = algorithms.allOf(i32, isPositive, &empty_arr);
+    try std.testing.expect(all_positive_empty);
+
+    const numbers = [_]i32{ 1, 2, 3, 4, 5 };
+
+    try std.testing.expect(algorithms.allOf(i32, struct {
+        fn foo(x: i32) bool {
+            return x > 0;
+        }
+    }.foo, &numbers));
+
+    try std.testing.expect(!algorithms.allOf(i32, struct {
+        fn foo(x: i32) bool {
+            return x > 10;
+        }
+    }.foo, &numbers));
 }
