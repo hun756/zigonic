@@ -13,6 +13,7 @@ pub fn build(b: *std.Build) void {
     const tests = [_]TestFile{
         TestFile{ .path = "src/tests/all_of_test.zig" },
         TestFile{ .path = "src/tests/max_element_test.zig" },
+        TestFile{ .path = "src/tests/any_of_test.zig" },
     };
 
     setupTestStep(b, &tests);
