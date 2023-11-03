@@ -15,6 +15,7 @@ pub fn build(b: *std.Build) void {
         TestFile{ .path = "src/tests/max_element_test.zig" },
         TestFile{ .path = "src/tests/any_of_test.zig" },
         TestFile{ .path = "src/tests/binary_search_test.zig" },
+        TestFile{ .path = "src/tests/accumulate_test.zig" },
     };
 
     setupTestStep(b, &tests);
