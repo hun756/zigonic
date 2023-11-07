@@ -37,11 +37,7 @@ pub fn bifurcateBy(comptime T: type, items: []const T, predicate: fn (T) bool) !
     }
 
     for (items) |item| {
-        if (predicate(item)) {
-            try trueItems.append(item);
-        } else {
-            try falseItems.append(item);
-        }
+        if (predicate(item)) try trueItems.append(item) else try falseItems.append(item);
     }
 
     return .{ try trueItems.toOwnedSlice(), try falseItems.toOwnedSlice() };
