@@ -4,3 +4,4 @@ pub const maxElement = @import("algorithms//max_element.zig").maxElement;
 pub const binarySearch = @import("algorithms//binary_search.zig").binarySearch;
 pub const accumulate = @import("algorithms//accumulate.zig").accumulate;
 pub const bifurcateBy = @import("algorithms//bifurcate_by.zig").bifurcateBy;
+pub const btoa = @import("algorithms//btoa.zig").btoa;
