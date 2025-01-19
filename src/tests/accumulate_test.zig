@@ -1,9 +1,10 @@
 const std = @import("std");
 const zigonic = @import("zigonic");
-const accumulate = zigonic.accumulate;
-const SliceIterator = zigonic.SliceIterator;
-const sum = zigonic.sum;
-const product = zigonic.product;
+const _accumulate = zigonic.accumulate;
+const accumulate = _accumulate.accumulate;
+const SliceIterator = _accumulate.SliceIterator;
+const sum = _accumulate.sum;
+const product = _accumulate.product;
 const math = std.math;
 const testing = std.testing;
 
