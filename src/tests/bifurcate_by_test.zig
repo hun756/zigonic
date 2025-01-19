@@ -21,7 +21,7 @@ test "bifurcateBy with integers" {
 }
 
 test "bifurcateBy with empty array" {
-    var items: []f64 = &[_]f64{};
+    const items: []f64 = &[_]f64{};
     const result = try zigonic.bifurcateBy(f64, items, isPositive);
 
     // Check that function can handle empty arrays
