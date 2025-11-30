@@ -23,22 +23,22 @@ pub fn bifurcate(
     slice: []const T,
     predicate: *const fn (T) bool,
 ) !BifurcateResult(T) {
-    var matching = std.ArrayList(T).init(allocator);
-    errdefer matching.deinit();
-    var non_matching = std.ArrayList(T).init(allocator);
-    errdefer non_matching.deinit();
+    var matching = std.ArrayListUnmanaged(T){};
+    errdefer matching.deinit(allocator);
+    var non_matching = std.ArrayListUnmanaged(T){};
+    errdefer non_matching.deinit(allocator);
 
     for (slice) |item| {
         if (predicate(item)) {
-            try matching.append(item);
+            try matching.append(allocator, item);
         } else {
-            try non_matching.append(item);
+            try non_matching.append(allocator, item);
         }
     }
 
     return .{
-        .matching = try matching.toOwnedSlice(),
-        .non_matching = try non_matching.toOwnedSlice(),
+        .matching = try matching.toOwnedSlice(allocator),
+        .non_matching = try non_matching.toOwnedSlice(allocator),
         .allocator = allocator,
     };
 }
@@ -51,22 +51,22 @@ pub fn bifurcateWithContext(
     context: Context,
     predicate: *const fn (T, Context) bool,
 ) !BifurcateResult(T) {
-    var matching = std.ArrayList(T).init(allocator);
-    errdefer matching.deinit();
-    var non_matching = std.ArrayList(T).init(allocator);
-    errdefer non_matching.deinit();
+    var matching = std.ArrayListUnmanaged(T){};
+    errdefer matching.deinit(allocator);
+    var non_matching = std.ArrayListUnmanaged(T){};
+    errdefer non_matching.deinit(allocator);
 
     for (slice) |item| {
         if (predicate(item, context)) {
-            try matching.append(item);
+            try matching.append(allocator, item);
         } else {
-            try non_matching.append(item);
+            try non_matching.append(allocator, item);
         }
     }
 
     return .{
-        .matching = try matching.toOwnedSlice(),
-        .non_matching = try non_matching.toOwnedSlice(),
+        .matching = try matching.toOwnedSlice(allocator),
+        .non_matching = try non_matching.toOwnedSlice(allocator),
         .allocator = allocator,
     };
 }

@@ -2,15 +2,15 @@ const std = @import("std");
 
 pub fn isIterator(comptime T: type) bool {
     const info = @typeInfo(T);
-    if (info != .Struct) return false;
+    if (info != .@"struct") return false;
 
     if (!@hasDecl(T, "next")) return false;
 
     const next_info = @typeInfo(@TypeOf(@field(T, "next")));
-    if (next_info != .Fn) return false;
+    if (next_info != .@"fn") return false;
 
-    const return_type = next_info.Fn.return_type orelse return false;
-    return @typeInfo(return_type) == .Optional;
+    const return_type = next_info.@"fn".return_type orelse return false;
+    return @typeInfo(return_type) == .optional;
 }
 
 pub fn isBidirectionalIterator(comptime T: type) bool {
@@ -26,10 +26,10 @@ pub fn isRandomAccessIterator(comptime T: type) bool {
 pub fn isComparable(comptime T: type) bool {
     const info = @typeInfo(T);
     return switch (info) {
-        .Int, .Float, .ComptimeInt, .ComptimeFloat => true,
-        .Enum => true,
-        .Pointer => |ptr| ptr.size == .One or ptr.size == .Slice,
-        .Struct => @hasDecl(T, "cmp") or @hasDecl(T, "lessThan"),
+        .int, .float, .comptime_int, .comptime_float => true,
+        .@"enum" => true,
+        .pointer => |ptr| ptr.size == .one or ptr.size == .slice,
+        .@"struct" => @hasDecl(T, "cmp") or @hasDecl(T, "lessThan"),
         else => false,
     };
 }
@@ -37,25 +37,25 @@ pub fn isComparable(comptime T: type) bool {
 pub fn isNumeric(comptime T: type) bool {
     const info = @typeInfo(T);
     return switch (info) {
-        .Int, .Float, .ComptimeInt, .ComptimeFloat => true,
+        .int, .float, .comptime_int, .comptime_float => true,
         else => false,
     };
 }
 
 pub fn isInteger(comptime T: type) bool {
-    return @typeInfo(T) == .Int or @typeInfo(T) == .ComptimeInt;
+    return @typeInfo(T) == .int or @typeInfo(T) == .comptime_int;
 }
 
 pub fn isFloat(comptime T: type) bool {
-    return @typeInfo(T) == .Float or @typeInfo(T) == .ComptimeFloat;
+    return @typeInfo(T) == .float or @typeInfo(T) == .comptime_float;
 }
 
 pub fn isSigned(comptime T: type) bool {
     const info = @typeInfo(T);
     return switch (info) {
-        .Int => |i| i.signedness == .signed,
-        .ComptimeInt => true,
-        .Float, .ComptimeFloat => true,
+        .int => |i| i.signedness == .signed,
+        .comptime_int => true,
+        .float, .comptime_float => true,
         else => false,
     };
 }
@@ -63,17 +63,17 @@ pub fn isSigned(comptime T: type) bool {
 pub fn ElementType(comptime T: type) type {
     const info = @typeInfo(T);
     return switch (info) {
-        .Pointer => |ptr| ptr.child,
-        .Array => |arr| arr.child,
+        .pointer => |ptr| ptr.child,
+        .array => |arr| arr.child,
         else => @compileError("Expected slice or array type, got " ++ @typeName(T)),
     };
 }
 
 pub fn isPredicate(comptime F: type, comptime T: type) bool {
     const info = @typeInfo(F);
-    if (info != .Fn) return false;
+    if (info != .@"fn") return false;
 
-    const fn_info = info.Fn;
+    const fn_info = info.@"fn";
     if (fn_info.params.len != 1) return false;
     if (fn_info.params[0].type != T) return false;
 
@@ -83,9 +83,9 @@ pub fn isPredicate(comptime F: type, comptime T: type) bool {
 
 pub fn isBinaryPredicate(comptime F: type, comptime T: type) bool {
     const info = @typeInfo(F);
-    if (info != .Fn) return false;
+    if (info != .@"fn") return false;
 
-    const fn_info = info.Fn;
+    const fn_info = info.@"fn";
     if (fn_info.params.len != 2) return false;
     if (fn_info.params[0].type != T) return false;
     if (fn_info.params[1].type != T) return false;
@@ -96,9 +96,9 @@ pub fn isBinaryPredicate(comptime F: type, comptime T: type) bool {
 
 pub fn isComparator(comptime F: type, comptime T: type) bool {
     const info = @typeInfo(F);
-    if (info != .Fn) return false;
+    if (info != .@"fn") return false;
 
-    const fn_info = info.Fn;
+    const fn_info = info.@"fn";
     if (fn_info.params.len != 2) return false;
     if (fn_info.params[0].type != T) return false;
     if (fn_info.params[1].type != T) return false;

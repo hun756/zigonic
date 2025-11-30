@@ -31,16 +31,16 @@ pub fn filter(
     slice: []const T,
     predicate: *const fn (T) bool,
 ) ![]T {
-    var list = std.ArrayList(T).init(allocator);
-    errdefer list.deinit();
+    var list = std.ArrayListUnmanaged(T){};
+    errdefer list.deinit(allocator);
 
     for (slice) |item| {
         if (predicate(item)) {
-            try list.append(item);
+            try list.append(allocator, item);
         }
     }
 
-    return list.toOwnedSlice();
+    return list.toOwnedSlice(allocator);
 }
 
 pub fn filterMap(
@@ -50,16 +50,16 @@ pub fn filterMap(
     slice: []const T,
     transform: *const fn (T) ?U,
 ) ![]U {
-    var list = std.ArrayList(U).init(allocator);
-    errdefer list.deinit();
+    var list = std.ArrayListUnmanaged(U){};
+    errdefer list.deinit(allocator);
 
     for (slice) |item| {
         if (transform(item)) |value| {
-            try list.append(value);
+            try list.append(allocator, value);
         }
     }
 
-    return list.toOwnedSlice();
+    return list.toOwnedSlice(allocator);
 }
 
 pub fn flatMap(
@@ -69,16 +69,16 @@ pub fn flatMap(
     slice: []const T,
     transform: *const fn (Allocator, T) anyerror![]U,
 ) ![]U {
-    var list = std.ArrayList(U).init(allocator);
-    errdefer list.deinit();
+    var list = std.ArrayListUnmanaged(U){};
+    errdefer list.deinit(allocator);
 
     for (slice) |item| {
         const inner = try transform(allocator, item);
         defer allocator.free(inner);
-        try list.appendSlice(inner);
+        try list.appendSlice(allocator, inner);
     }
 
-    return list.toOwnedSlice();
+    return list.toOwnedSlice(allocator);
 }
 
 test "map" {

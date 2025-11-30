@@ -1,8 +1,8 @@
 const std = @import("std");
 
 pub fn EnumerateIterator(comptime Inner: type) type {
-    const ItemType = @typeInfo(@TypeOf(Inner.next)).Fn.return_type.?;
-    const T = @typeInfo(ItemType).Optional.child;
+    const ItemType = @typeInfo(@TypeOf(Inner.next)).@"fn".return_type.?;
+    const T = @typeInfo(ItemType).optional.child;
 
     return struct {
         const Self = @This();

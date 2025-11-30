@@ -57,7 +57,7 @@ pub const ErrorContext = struct {
 
 test "ErrorContext formatting" {
     const ctx = ErrorContext.init("test error", @src());
-    var buf: [256]u8 = undefined;
-    const result = std.fmt.bufPrint(&buf, "{}", .{ctx}) catch unreachable;
+    var buf: [1024]u8 = undefined;
+    const result = std.fmt.bufPrint(&buf, "{any}", .{ctx}) catch unreachable;
     try std.testing.expect(result.len > 0);
 }

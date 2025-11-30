@@ -6,12 +6,12 @@ pub fn SliceIterator(comptime T: type) type {
     return struct {
         const Self = @This();
 
-        slice: []const T,
+        data: []const T,
         index: usize,
 
-        pub fn init(data: []const T) Self {
+        pub fn init(slice_data: []const T) Self {
             return .{
-                .slice = data,
+                .data = slice_data,
                 .index = 0,
             };
         }
@@ -21,57 +21,57 @@ pub fn SliceIterator(comptime T: type) type {
         }
 
         pub fn next(self: *Self) ?T {
-            if (self.index >= self.slice.len) return null;
-            const value = self.slice[self.index];
+            if (self.index >= self.data.len) return null;
+            const value = self.data[self.index];
             self.index += 1;
             return value;
         }
 
         pub fn peek(self: *const Self) ?T {
-            if (self.index >= self.slice.len) return null;
-            return self.slice[self.index];
+            if (self.index >= self.data.len) return null;
+            return self.data[self.index];
         }
 
         pub fn prev(self: *Self) ?T {
             if (self.index == 0) return null;
             self.index -= 1;
-            return self.slice[self.index];
+            return self.data[self.index];
         }
 
         pub inline fn hasNext(self: *const Self) bool {
-            return self.index < self.slice.len;
+            return self.index < self.data.len;
         }
 
         pub inline fn remaining(self: *const Self) usize {
-            return self.slice.len - self.index;
+            return self.data.len - self.index;
         }
 
         pub fn reset(self: *Self) void {
             self.index = 0;
         }
 
-        pub fn get(self: *const Self, index: usize) ?T {
-            if (index >= self.slice.len) return null;
-            return self.slice[index];
+        pub fn get(self: *const Self, idx: usize) ?T {
+            if (idx >= self.data.len) return null;
+            return self.data[idx];
         }
 
         pub fn getRelative(self: *const Self, offset: usize) ?T {
             const abs_index = self.index + offset;
-            if (abs_index >= self.slice.len) return null;
-            return self.slice[abs_index];
+            if (abs_index >= self.data.len) return null;
+            return self.data[abs_index];
         }
 
-        pub fn getPtr(self: *const Self, index: usize) ?*const T {
-            if (index >= self.slice.len) return null;
-            return &self.slice[index];
+        pub fn getPtr(self: *const Self, idx: usize) ?*const T {
+            if (idx >= self.data.len) return null;
+            return &self.data[idx];
         }
 
         pub inline fn len(self: *const Self) usize {
-            return self.slice.len;
+            return self.data.len;
         }
 
         pub inline fn isEmpty(self: *const Self) bool {
-            return self.slice.len == 0;
+            return self.data.len == 0;
         }
 
         pub inline fn position(self: *const Self) usize {
@@ -79,27 +79,27 @@ pub fn SliceIterator(comptime T: type) type {
         }
 
         pub fn rest(self: *const Self) []const T {
-            return self.slice[self.index..];
+            return self.data[self.index..];
         }
 
         pub fn slice(self: *const Self, start: usize, end: usize) Self {
-            const actual_start = @min(start, self.slice.len);
-            const actual_end = @min(end, self.slice.len);
+            const actual_start = @min(start, self.data.len);
+            const actual_end = @min(end, self.data.len);
             return Self{
-                .slice = self.slice[actual_start..actual_end],
+                .data = self.data[actual_start..actual_end],
                 .index = 0,
             };
         }
 
         pub fn skip(self: *Self, n: usize) *Self {
-            self.index = @min(self.index + n, self.slice.len);
+            self.index = @min(self.index + n, self.data.len);
             return self;
         }
 
         pub fn take(self: *Self, n: usize) []const T {
             const available = self.remaining();
             const take_count = @min(n, available);
-            const result = self.slice[self.index .. self.index + take_count];
+            const result = self.data[self.index .. self.index + take_count];
             self.index += take_count;
             return result;
         }
@@ -183,22 +183,22 @@ pub fn SliceIterator(comptime T: type) type {
             if (rem == 0) return &[_]T{};
 
             const result = try allocator.alloc(T, rem);
-            @memcpy(result, self.slice[self.index..]);
-            self.index = self.slice.len;
+            @memcpy(result, self.data[self.index..]);
+            self.index = self.data.len;
             return result;
         }
 
         pub fn filter(self: *Self, allocator: Allocator, comptime pred: fn (T) bool) ![]T {
-            var list = std.ArrayList(T).init(allocator);
-            errdefer list.deinit();
+            var list = std.ArrayListUnmanaged(T){};
+            errdefer list.deinit(allocator);
 
             while (self.next()) |item| {
                 if (pred(item)) {
-                    try list.append(item);
+                    try list.append(allocator, item);
                 }
             }
 
-            return list.toOwnedSlice();
+            return list.toOwnedSlice(allocator);
         }
 
         pub fn map(
@@ -224,22 +224,22 @@ pub fn SliceIterator(comptime T: type) type {
             allocator: Allocator,
             comptime pred: fn (T) bool,
         ) !core.BifurcateResult(T) {
-            var matching = std.ArrayList(T).init(allocator);
-            errdefer matching.deinit();
-            var non_matching = std.ArrayList(T).init(allocator);
-            errdefer non_matching.deinit();
+            var matching = std.ArrayListUnmanaged(T){};
+            errdefer matching.deinit(allocator);
+            var non_matching = std.ArrayListUnmanaged(T){};
+            errdefer non_matching.deinit(allocator);
 
             while (self.next()) |item| {
                 if (pred(item)) {
-                    try matching.append(item);
+                    try matching.append(allocator, item);
                 } else {
-                    try non_matching.append(item);
+                    try non_matching.append(allocator, item);
                 }
             }
 
             return .{
-                .matching = try matching.toOwnedSlice(),
-                .non_matching = try non_matching.toOwnedSlice(),
+                .matching = try matching.toOwnedSlice(allocator),
+                .non_matching = try non_matching.toOwnedSlice(allocator),
                 .allocator = allocator,
             };
         }

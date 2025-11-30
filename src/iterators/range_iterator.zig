@@ -85,14 +85,14 @@ pub fn RangeIterator(comptime T: type) type {
         }
 
         pub fn collect(self: *Self, allocator: std.mem.Allocator) ![]T {
-            var list = std.ArrayList(T).init(allocator);
-            errdefer list.deinit();
+            var list = std.ArrayListUnmanaged(T){};
+            errdefer list.deinit(allocator);
 
             while (self.next()) |value| {
-                try list.append(value);
+                try list.append(allocator, value);
             }
 
-            return list.toOwnedSlice();
+            return list.toOwnedSlice(allocator);
         }
 
         pub fn forEach(self: *Self, comptime f: fn (T) void) void {
