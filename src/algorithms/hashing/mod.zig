@@ -1,0 +1,24 @@
+pub const hashing = @import("hashing.zig");
+
+pub const fnv1a32 = hashing.fnv1a32;
+pub const fnv1a64 = hashing.fnv1a64;
+pub const fnv1_32 = hashing.fnv1_32;
+pub const fnv1_64 = hashing.fnv1_64;
+pub const djb2 = hashing.djb2;
+pub const sdbm = hashing.sdbm;
+pub const jenkinsOneAtATime = hashing.jenkinsOneAtATime;
+pub const murmur3_32 = hashing.murmur3_32;
+pub const xxHash32 = hashing.xxHash32;
+pub const adler32 = hashing.adler32;
+pub const crc32 = hashing.crc32;
+pub const crc32WithInit = hashing.crc32WithInit;
+pub const crc16 = hashing.crc16;
+pub const pearsonHash = hashing.pearsonHash;
+pub const fletcher16 = hashing.fletcher16;
+pub const fletcher32 = hashing.fletcher32;
+pub const checksum8Xor = hashing.checksum8Xor;
+pub const checksum8Sum = hashing.checksum8Sum;
+pub const checksum16 = hashing.checksum16;
+pub const internetChecksum = hashing.internetChecksum;
+pub const hashCombine = hashing.hashCombine;
+pub const hashSlice = hashing.hashSlice;
