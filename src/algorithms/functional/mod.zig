@@ -1,0 +1,25 @@
+pub const functional = @import("functional.zig");
+
+pub const identity = functional.identity;
+pub const compose = functional.compose;
+pub const pipe = functional.pipe;
+pub const flip = functional.flip;
+pub const negate = functional.negate;
+pub const conjunct = functional.conjunct;
+pub const disjunct = functional.disjunct;
+pub const applyN = functional.applyN;
+pub const iterate = functional.iterate;
+pub const unfold = functional.unfold;
+pub const zipWith = functional.zipWith;
+pub const scanLeft = functional.scanLeft;
+pub const scanRight = functional.scanRight;
+pub const takeWhile = functional.takeWhile;
+pub const dropWhile = functional.dropWhile;
+pub const span = functional.span;
+pub const groupBy = functional.groupBy;
+pub const intersperse = functional.intersperse;
+pub const intercalate = functional.intercalate;
+pub const chunks = functional.chunks;
+pub const windows = functional.windows;
+pub const flatten = functional.flatten;
+pub const transpose = functional.transpose;
