@@ -1,0 +1,21 @@
+pub const string_algorithms = @import("string_algorithms.zig");
+
+pub const kmpSearch = string_algorithms.kmpSearch;
+pub const boyerMooreSearch = string_algorithms.boyerMooreSearch;
+pub const rabinKarpSearch = string_algorithms.rabinKarpSearch;
+pub const levenshteinDistance = string_algorithms.levenshteinDistance;
+pub const longestCommonSubstring = string_algorithms.longestCommonSubstring;
+pub const longestCommonSubsequence = string_algorithms.longestCommonSubsequence;
+pub const isPalindrome = string_algorithms.isPalindrome;
+pub const reverseString = string_algorithms.reverseString;
+pub const countSubstrings = string_algorithms.countSubstrings;
+pub const hammingDistance = string_algorithms.hammingDistance;
+pub const trim = string_algorithms.trim;
+pub const trimLeft = string_algorithms.trimLeft;
+pub const trimRight = string_algorithms.trimRight;
+pub const split = string_algorithms.split;
+pub const join = string_algorithms.join;
+pub const startsWith = string_algorithms.startsWith;
+pub const endsWith = string_algorithms.endsWith;
+pub const strContains = string_algorithms.contains;
+pub const strReplace = string_algorithms.replace;
